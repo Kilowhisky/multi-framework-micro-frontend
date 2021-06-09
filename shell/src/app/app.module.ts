@@ -1,28 +1,29 @@
+import { APP_INITIALIZER, Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { RouterModule } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { startsWith } from './router.utils';
+import { routeFactory } from './routes/route-factory.initializer';
+import { RouteLookupService } from './routes/route-lookup.service';
 import { WrapperComponent } from './wrapper/wrapper.component';
 
 @NgModule({
   imports: [
     BrowserModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { matcher: startsWith('mfe1'), component: WrapperComponent, data: { importName: 'mfe1', elementName: 'mfe1-element' }},
-      { matcher: startsWith('mfe2'), component: WrapperComponent, data: { importName: 'mfe2', elementName: 'mfe2-element' }},
-      { matcher: startsWith('mfe3'), component: WrapperComponent, data: { importName: 'mfe3', elementName: 'mfe3-element' }},
-      { matcher: startsWith('mfe4'), component: WrapperComponent, data: { importName: 'mfe4', elementName: 'mfe4-element' }},
-    ])
+    RouterModule.forRoot([], { initialNavigation: 'disabled' })
   ],
   declarations: [
     AppComponent,
     WrapperComponent
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INITIALIZER, 
+      useFactory: routeFactory,
+      deps: [Router, RouteLookupService],
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
